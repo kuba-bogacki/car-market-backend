@@ -31,7 +31,12 @@ public class CarServiceImplementation implements CarService {
 
     @Override
     public List<Car> getAllCars() {
-        return carRepository.findAll();
+        return carRepository.findAll().stream().filter(e -> !e.isCarSold()).toList();
+    }
+
+    @Override
+    public Car getCarById(Long carId) {
+        return carRepository.getCarByCarId(carId);
     }
 
     @Override

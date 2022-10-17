@@ -26,15 +26,18 @@ public class Customer {
     private String customerLastName;
     @Column(name = "customer_email", unique = true)
     private String customerEmail;
+    @Column(name = "customer_password")
+    private String customerPassword;
     @OneToMany
     @Column(name = "customer_cars_list")
     private List<Car> customerCarsList = new ArrayList<>();
 
     @Builder
-    public Customer(String customerFirstName, String customerLastName, String customerEmail) {
+    public Customer(String customerFirstName, String customerLastName, String customerEmail, String customerPassword) {
         super();
         this.customerFirstName = customerFirstName;
         this.customerLastName = customerLastName;
         this.customerEmail = customerEmail;
+        this.customerPassword = customerPassword;
     }
 }

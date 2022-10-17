@@ -5,13 +5,16 @@ import com.carmarket.model.type.CarType;
 import com.carmarket.model.type.EngineType;
 import com.carmarket.service.CarService;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.Base64;
 import java.util.List;
 
 import static com.carmarket.utils.Directory.IMAGE_DIRECTORY;
@@ -30,6 +33,17 @@ public class CarController {
     @GetMapping(value = "/cars")
     public List<Car> getAllCars() {
         return carService.getAllCars();
+    }
+
+    @GetMapping(value = "/get-car/{carId}")
+    public Car getCarById(@PathVariable("carId") Long carId) {
+        return carService.getCarById(carId);
+    }
+
+    @GetMapping(value = "/get-car-image/{imageName}")
+    public String getCarImage(@PathVariable("imageName") String imageName) throws IOException {
+        byte[] fileContent = FileUtils.readFileToByteArray(new File(IMAGE_DIRECTORY + imageName));
+        return Base64.getEncoder().encodeToString(fileContent);
     }
 
     @PostMapping(value = "/add-new-car")

@@ -14,4 +14,5 @@ public interface CarService {
     void addNewCar(String carCompany, String carModel, int carReleaseYear, int carMileage, CarType carType,
                    EngineType engineType, boolean carCrushed, Long carPrice, String carImage);
     void uploadImage(String imageDirectory, MultipartFile multipartFile, String imageName) throws IOException;
+    Car getCarById(Long carId);
 }
