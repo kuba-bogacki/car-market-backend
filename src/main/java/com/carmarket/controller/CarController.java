@@ -4,7 +4,6 @@ import com.carmarket.model.Car;
 import com.carmarket.model.type.CarType;
 import com.carmarket.model.type.EngineType;
 import com.carmarket.service.CarService;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

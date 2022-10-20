@@ -1,0 +1,23 @@
+{
+  "properties": [
+    {
+      "name": "application.jwt.tokenPrefix",
+      "type": "java.lang.String",
+      "description": "Bearer "
+    },
+    {
+      "name": "application.jwt.secretKey",
+      "type": "java.lang.String",
+      "description": "verystrongsecureverystrongsecureverystrongsecureverystrongsecureverystrongsecure"
+    },
+    {
+      "name": "application.jwt.tokenExpirationAfterSeconds",
+      "type": "java.lang.String",
+      "description": "604800"
+    },
+    {
+      "name": "application.jwt.tokenHeader",
+      "type": "java.lang.String",
+      "description": "Authorization"
+    }
+  ] }
