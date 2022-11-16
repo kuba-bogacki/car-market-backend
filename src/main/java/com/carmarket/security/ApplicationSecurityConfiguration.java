@@ -5,19 +5,16 @@ import com.carmarket.jwt.TokenVerifier;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
-import static com.carmarket.model.type.CustomerRole.ADMIN;
 
 @Configuration
 @EnableWebSecurity
@@ -55,32 +52,25 @@ public class ApplicationSecurityConfiguration extends WebSecurityConfigurerAdapt
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
+                .cors().and().authorizeRequests().and()
                 .csrf().disable()
                 .exceptionHandling().authenticationEntryPoint(jwtUnauthorizedResponseAuthentication).and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
+                .addFilterBefore(tokenVerifier, UsernamePasswordAuthenticationFilter.class)
                 .authorizeRequests()
-                .antMatchers("/", "index", "/css/*", "/js/*", "/authenticate", "/temp-new-user")
+                .antMatchers("/", "/css/*", "/js/*", "/authenticate", "/register")
                 .permitAll()
-                .antMatchers("/api/**").hasRole(ADMIN.name())
+//                .antMatchers("/api/**").hasRole(ADMIN.name())
                 .anyRequest().authenticated();
         httpSecurity
-                .addFilterBefore(tokenVerifier, UsernamePasswordAuthenticationFilter.class);
-        httpSecurity
-                .headers()
-                .cacheControl(); //disable caching
+                .headers().cacheControl(HeadersConfigurer.CacheControlConfig::disable); //disable caching
     }
 
-//    @Override
-//    public void configure(WebSecurity webSecurity) throws Exception {
-//        webSecurity
-//                .ignoring()
-//                .antMatchers(HttpMethod.POST, "/authenticate")
-//                .antMatchers(HttpMethod.OPTIONS, "/**")
-//                .and()
-//                .ignoring()
-//                .antMatchers(HttpMethod.GET, "/") //Other Stuff You want to Ignore
-//                .and()
-//                .ignoring()
-//                .antMatchers("/h2-console/**/**");//Should not be in Production!
+//    @Bean
+//    CorsConfigurationSource corsConfigurationSource() {
+//        final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+//        CorsConfiguration corsConfiguration = new CorsConfiguration().applyPermitDefaultValues();
+//        source.registerCorsConfiguration("/**", corsConfiguration);
+//        return source;
 //    }
 }

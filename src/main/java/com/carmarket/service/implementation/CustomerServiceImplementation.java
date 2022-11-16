@@ -1,6 +1,8 @@
 package com.carmarket.service.implementation;
 
+import com.carmarket.model.Car;
 import com.carmarket.model.Customer;
+import com.carmarket.repository.CarRepository;
 import com.carmarket.repository.CustomerRepository;
 import com.carmarket.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +11,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Optional;
 
 import static com.carmarket.model.type.CustomerRole.ADMIN;
@@ -18,11 +23,15 @@ import static com.carmarket.model.type.CustomerRole.USER;
 public class CustomerServiceImplementation implements CustomerService {
 
     private final CustomerRepository customerRepository;
+    private final CarRepository carRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public CustomerServiceImplementation(CustomerRepository customerRepository, PasswordEncoder passwordEncoder) {
+    public CustomerServiceImplementation(CustomerRepository customerRepository,
+                                         CarRepository carRepository,
+                                         PasswordEncoder passwordEncoder) {
         this.customerRepository = customerRepository;
+        this.carRepository = carRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -41,12 +50,6 @@ public class CustomerServiceImplementation implements CustomerService {
                 .enabled(true)
                 .build();
         customerRepository.save(customer);
-    }
-
-    @Override
-    public Customer loadUserByCustomerEmail(String customerEmail) throws UsernameNotFoundException {
-        return customerRepository.findCustomerByCustomerEmail(customerEmail)
-                .orElseThrow(() -> new UsernameNotFoundException(String.format("Username %s not found", customerEmail)));
     }
 
     @Override
@@ -69,8 +72,10 @@ public class CustomerServiceImplementation implements CustomerService {
         Customer customer = Customer.builder()
                 .customerFirstName(customerFirstName)
                 .customerLastName(customerLastName)
-                .customerPassword(passwordEncoder.encode(customerPassword))
                 .customerEmail(customerEmail)
+                .customerPassword(passwordEncoder.encode(customerPassword))
+                .customerCarsList(new ArrayList<>())
+                .customerLikes(new HashSet<>())
                 .authorities(USER.getGrantedAuthorities())
                 .accountNonExpired(true)
                 .accountNonLocked(true)
@@ -78,5 +83,19 @@ public class CustomerServiceImplementation implements CustomerService {
                 .enabled(true)
                 .build();
         customerRepository.save(customer);
+    }
+
+    @Transactional
+    @Override
+    public void addCarToCustomerFavourites(Customer customer, Car car) {
+        customerRepository.save(customer.addCarToCustomerSet(car));
+        carRepository.save(car.addCustomerToCarSet(customer));
+    }
+
+    @Transactional
+    @Override
+    public void removeCarFromCustomerFavourites(Customer customer, Car car) {
+        customerRepository.save(customer.removeCarFromCustomerSet(car));
+        carRepository.save(car.removeCustomerFromCarSet(customer));
     }
 }

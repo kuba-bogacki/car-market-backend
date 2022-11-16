@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.io.Serial;
@@ -50,10 +49,6 @@ public class JwtConfiguration implements Serializable {
         this.tokenPrefix = tokenPrefix;
         this.tokenExpirationAfterSeconds = tokenExpirationAfterSeconds;
         this.tokenHeader = tokenHeader;
-    }
-
-    public String getAuthorizationHeader() {
-        return HttpHeaders.AUTHORIZATION;
     }
 
     public String getUsernameFromToken(String token) {

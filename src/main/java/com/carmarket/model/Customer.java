@@ -1,5 +1,6 @@
 package com.carmarket.model;
 
+import com.sun.istack.NotNull;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,10 +10,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Getter
@@ -25,17 +23,25 @@ public class Customer implements UserDetails {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "customer_id")
     private Long customerId;
+    @NotNull
     @Column(name = "customer_first_name")
     private String customerFirstName;
+    @NotNull
     @Column(name = "customer_last_name")
     private String customerLastName;
+    @NotNull
     @Column(name = "customer_email", unique = true)
     private String customerEmail;
+    @NotNull
     @Column(name = "customer_password")
     private String customerPassword;
-    @OneToMany
-    @Column(name = "customer_cars_list")
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Car> customerCarsList = new ArrayList<>();
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
+    @JoinTable(name = "customers_cars",
+            joinColumns = {@JoinColumn(name = "customer_id")},
+            inverseJoinColumns = {@JoinColumn(name = "car_id")})
+    private Set<Car> customerLikes = new HashSet<>();
     @ElementCollection(fetch = FetchType.EAGER)
     @Column(name = "authorities")
     private Set<SimpleGrantedAuthority> authorities;
@@ -50,12 +56,14 @@ public class Customer implements UserDetails {
 
     @Builder
     public Customer(String customerFirstName, String customerLastName, String customerEmail, String customerPassword,
-                    Set<SimpleGrantedAuthority> authorities, boolean accountNonExpired, boolean accountNonLocked,
-                    boolean credentialsNonExpired, boolean enabled) {
+                    List<Car> customerCarsList, Set<Car> customerLikes, Set<SimpleGrantedAuthority> authorities,
+                    boolean accountNonExpired, boolean accountNonLocked, boolean credentialsNonExpired, boolean enabled) {
         super();
         this.customerFirstName = customerFirstName;
         this.customerLastName = customerLastName;
         this.customerPassword = customerPassword;
+        this.customerCarsList = customerCarsList;
+        this.customerLikes = customerLikes;
         this.customerEmail = customerEmail;
         this.authorities = authorities;
         this.accountNonExpired = accountNonExpired;
@@ -97,5 +105,15 @@ public class Customer implements UserDetails {
     @Override
     public boolean isEnabled() {
         return this.enabled;
+    }
+
+    public Customer addCarToCustomerSet(Car car) {
+        this.customerLikes.add(car);
+        return this;
+    }
+
+    public Customer removeCarFromCustomerSet(Car car) {
+        this.customerLikes.remove(car);
+        return this;
     }
 }

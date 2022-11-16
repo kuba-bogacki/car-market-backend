@@ -1,23 +1,19 @@
 package com.carmarket.service.implementation;
 
 import com.carmarket.model.Car;
+import com.carmarket.model.Customer;
 import com.carmarket.model.type.CarType;
 import com.carmarket.model.type.EngineType;
 import com.carmarket.repository.CarRepository;
 import com.carmarket.service.CarService;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 
 @Service
 public class CarServiceImplementation implements CarService {
@@ -41,7 +37,7 @@ public class CarServiceImplementation implements CarService {
 
     @Override
     public void addNewCar(String carCompany, String carModel, int carReleaseYear, int carMileage, CarType carType,
-                          EngineType engineType, boolean carCrushed, Long carPrice, String carImage) {
+                          EngineType engineType, boolean carCrushed, Long carPrice, String carImage, Customer customer) {
         Car car = Car.builder()
                 .carCompany(carCompany)
                 .carModel(carModel)
@@ -53,6 +49,8 @@ public class CarServiceImplementation implements CarService {
                 .carPrice(carPrice)
                 .carImage(carImage)
                 .carSold(false)
+                .customer(customer)
+                .carLikes(new HashSet<>())
                 .build();
         carRepository.save(car);
     }

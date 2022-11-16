@@ -2,12 +2,15 @@ package com.carmarket.model;
 
 import com.carmarket.model.type.CarType;
 import com.carmarket.model.type.EngineType;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -42,11 +45,18 @@ public class Car {
     private String carImage;
     @Column(name = "car_sold")
     private boolean carSold;
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "customer_id")
+    private Customer customer;
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
+    @JsonIgnore
+    private Set<Customer> carLikes = new HashSet<>();
 
     @Builder
     public Car(String carCompany, String carModel, int carReleaseYear, int carMileage,
                CarType carType, EngineType engineType, boolean carCrushed, Long carPrice,
-               String carImage, boolean carSold) {
+               String carImage, boolean carSold, Customer customer, Set<Customer> carLikes) {
         super();
         this.carCompany = carCompany;
         this.carModel = carModel;
@@ -58,5 +68,17 @@ public class Car {
         this.carPrice = carPrice;
         this.carImage = carImage;
         this.carSold = carSold;
+        this.customer = customer;
+        this.carLikes = carLikes;
+    }
+
+    public Car addCustomerToCarSet(Customer customer) {
+        this.carLikes.add(customer);
+        return this;
+    }
+
+    public Car removeCustomerFromCarSet(Customer customer) {
+        this.carLikes.remove(customer);
+        return this;
     }
 }
