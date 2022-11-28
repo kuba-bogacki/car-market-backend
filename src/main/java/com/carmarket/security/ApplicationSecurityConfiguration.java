@@ -59,7 +59,7 @@ public class ApplicationSecurityConfiguration extends WebSecurityConfigurerAdapt
                 .addFilterBefore(tokenVerifier, UsernamePasswordAuthenticationFilter.class)
                 .authorizeRequests()
                 .antMatchers("/", "/css/*", "/js/*", "/authenticate", "/register", "/cars", "/get-car/*",
-                        "/get-public-stripe-key", "/get-secret-stripe-key")
+                        "/get-publish-stripe-key")
                 .permitAll()
 //                .antMatchers("/api/**").hasRole(ADMIN.name())
                 .anyRequest().authenticated();

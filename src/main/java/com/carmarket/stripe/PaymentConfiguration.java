@@ -21,11 +21,14 @@ public class PaymentConfiguration implements Serializable {
 
     @Serial
     private static final long serialVersionUID = -3301605591108950415L;
+    private String stripePublicKey;
     private String stripeSecretKey = Stripe.apiKey;
 
     @Autowired
     public PaymentConfiguration(
+            @Value("${stripe.public.key:}") String stripePublicKey,
             @Value("${stripe.secret.key:}") String stripeSecretKey) {
+        this.stripePublicKey = stripePublicKey;
         Stripe.apiKey = stripeSecretKey;
     }
 }

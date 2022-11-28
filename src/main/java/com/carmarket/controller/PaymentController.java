@@ -1,6 +1,7 @@
 package com.carmarket.controller;
 
 import com.carmarket.jwt.JwtConfiguration;
+import com.carmarket.model.Car;
 import com.carmarket.model.Customer;
 import com.carmarket.model.type.Currency;
 import com.carmarket.service.CarService;
@@ -11,6 +12,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.stripe.exception.StripeException;
 import com.stripe.model.Charge;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -37,10 +39,10 @@ public class PaymentController {
         this.jwtConfiguration = jwtConfiguration;
     }
 
-    @GetMapping(value = "/get-secret-stripe-key")
-    public ResponseEntity<String> getSecretStripeKey() {
-        String secretKey = paymentConfiguration.getStripeSecretKey();
-        return ResponseEntity.ok(secretKey);
+    @GetMapping(value = "/get-publish-stripe-key")
+    public ResponseEntity<String> getPublishStripeKey() {
+        String publicKey = paymentConfiguration.getStripePublicKey();
+        return ResponseEntity.ok(publicKey);
     }
 
     @PostMapping(value = "/charge-customer")
