@@ -41,7 +41,7 @@ public class CustomerController {
         }
     }
 
-    @PostMapping("/register")
+    @PostMapping(value = "/register")
     public ResponseEntity<?> registerUser(@RequestBody Customer customer) {
         if (customerService.selectCustomerByCustomerEmail(customer.getCustomerEmail()).isPresent()) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

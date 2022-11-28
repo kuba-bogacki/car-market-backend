@@ -12,11 +12,12 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
 
 @Service
-public class CarServiceImplementation implements CarService {
+class CarServiceImplementation implements CarService {
 
     private final CarRepository carRepository;
 
@@ -49,6 +50,7 @@ public class CarServiceImplementation implements CarService {
                 .carPrice(carPrice)
                 .carImage(carImage)
                 .carSold(false)
+                .carPublished(LocalDate.now())
                 .customer(customer)
                 .carLikes(new HashSet<>())
                 .build();
@@ -59,5 +61,13 @@ public class CarServiceImplementation implements CarService {
     public void uploadImage(String imageDirectory, MultipartFile multipartFile, String imageName) throws IOException {
         File directory = new File(imageDirectory + imageName);
         multipartFile.transferTo(directory);
+    }
+
+    @Override
+    public void changeCarStatusAndOwner(Long carId, Customer customer) {
+        Car car = carRepository.getCarByCarId(carId);
+        car.setCarSold(true);
+        car.setCustomer(customer);
+        carRepository.save(car);
     }
 }

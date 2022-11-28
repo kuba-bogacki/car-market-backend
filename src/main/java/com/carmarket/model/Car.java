@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -45,6 +46,8 @@ public class Car {
     private String carImage;
     @Column(name = "car_sold")
     private boolean carSold;
+    @Column(name = "car_published")
+    private LocalDate carPublished;
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id")
@@ -55,8 +58,8 @@ public class Car {
 
     @Builder
     public Car(String carCompany, String carModel, int carReleaseYear, int carMileage,
-               CarType carType, EngineType engineType, boolean carCrushed, Long carPrice,
-               String carImage, boolean carSold, Customer customer, Set<Customer> carLikes) {
+               CarType carType, EngineType engineType, boolean carCrushed, Long carPrice, String carImage,
+               boolean carSold, LocalDate carPublished, Customer customer, Set<Customer> carLikes) {
         super();
         this.carCompany = carCompany;
         this.carModel = carModel;
@@ -68,6 +71,7 @@ public class Car {
         this.carPrice = carPrice;
         this.carImage = carImage;
         this.carSold = carSold;
+        this.carPublished = carPublished;
         this.customer = customer;
         this.carLikes = carLikes;
     }

@@ -58,7 +58,8 @@ public class ApplicationSecurityConfiguration extends WebSecurityConfigurerAdapt
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .addFilterBefore(tokenVerifier, UsernamePasswordAuthenticationFilter.class)
                 .authorizeRequests()
-                .antMatchers("/", "/css/*", "/js/*", "/authenticate", "/register")
+                .antMatchers("/", "/css/*", "/js/*", "/authenticate", "/register", "/cars", "/get-car/*",
+                        "/get-public-stripe-key", "/get-secret-stripe-key")
                 .permitAll()
 //                .antMatchers("/api/**").hasRole(ADMIN.name())
                 .anyRequest().authenticated();

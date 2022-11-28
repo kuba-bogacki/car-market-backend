@@ -20,7 +20,7 @@ import static com.carmarket.model.type.CustomerRole.ADMIN;
 import static com.carmarket.model.type.CustomerRole.USER;
 
 @Service
-public class CustomerServiceImplementation implements CustomerService {
+class CustomerServiceImplementation implements CustomerService {
 
     private final CustomerRepository customerRepository;
     private final CarRepository carRepository;

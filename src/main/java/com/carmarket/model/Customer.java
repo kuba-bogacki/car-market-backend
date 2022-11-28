@@ -1,6 +1,5 @@
 package com.carmarket.model;
 
-import com.sun.istack.NotNull;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,16 +22,12 @@ public class Customer implements UserDetails {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "customer_id")
     private Long customerId;
-    @NotNull
     @Column(name = "customer_first_name")
     private String customerFirstName;
-    @NotNull
     @Column(name = "customer_last_name")
     private String customerLastName;
-    @NotNull
     @Column(name = "customer_email", unique = true)
     private String customerEmail;
-    @NotNull
     @Column(name = "customer_password")
     private String customerPassword;
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)

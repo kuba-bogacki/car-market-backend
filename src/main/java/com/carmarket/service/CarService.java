@@ -8,6 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 public interface CarService {
     List<Car> getAllCars();
@@ -15,4 +16,5 @@ public interface CarService {
                    EngineType engineType, boolean carCrushed, Long carPrice, String carImage, Customer customer);
     void uploadImage(String imageDirectory, MultipartFile multipartFile, String imageName) throws IOException;
     Car getCarById(Long carId);
+    void changeCarStatusAndOwner(Long carId, Customer customer);
 }
