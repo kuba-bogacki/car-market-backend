@@ -5,6 +5,7 @@ import com.carmarket.model.Customer;
 import com.carmarket.repository.CarRepository;
 import com.carmarket.repository.CustomerRepository;
 import com.carmarket.service.CustomerService;
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -76,6 +77,7 @@ class CustomerServiceImplementation implements CustomerService {
                 .customerPassword(passwordEncoder.encode(customerPassword))
                 .customerCarsList(new ArrayList<>())
                 .customerLikes(new HashSet<>())
+                .customerArticles(new ArrayList<>())
                 .authorities(USER.getGrantedAuthorities())
                 .accountNonExpired(true)
                 .accountNonLocked(true)

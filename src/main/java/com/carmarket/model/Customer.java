@@ -37,6 +37,9 @@ public class Customer implements UserDetails {
             joinColumns = {@JoinColumn(name = "customer_id")},
             inverseJoinColumns = {@JoinColumn(name = "car_id")})
     private Set<Car> customerLikes = new HashSet<>();
+
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Article> customerArticles = new ArrayList<>();
     @ElementCollection(fetch = FetchType.EAGER)
     @Column(name = "authorities")
     private Set<SimpleGrantedAuthority> authorities;
@@ -51,14 +54,16 @@ public class Customer implements UserDetails {
 
     @Builder
     public Customer(String customerFirstName, String customerLastName, String customerEmail, String customerPassword,
-                    List<Car> customerCarsList, Set<Car> customerLikes, Set<SimpleGrantedAuthority> authorities,
-                    boolean accountNonExpired, boolean accountNonLocked, boolean credentialsNonExpired, boolean enabled) {
+                    List<Car> customerCarsList, Set<Car> customerLikes, List<Article> customerArticles,
+                    Set<SimpleGrantedAuthority> authorities, boolean accountNonExpired, boolean accountNonLocked,
+                    boolean credentialsNonExpired, boolean enabled) {
         super();
         this.customerFirstName = customerFirstName;
         this.customerLastName = customerLastName;
         this.customerPassword = customerPassword;
         this.customerCarsList = customerCarsList;
         this.customerLikes = customerLikes;
+        this.customerArticles = customerArticles;
         this.customerEmail = customerEmail;
         this.authorities = authorities;
         this.accountNonExpired = accountNonExpired;
