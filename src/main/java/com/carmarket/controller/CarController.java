@@ -6,6 +6,7 @@ import com.carmarket.model.type.CarType;
 import com.carmarket.model.type.EngineType;
 import com.carmarket.service.CarService;
 import com.carmarket.service.CustomerService;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,6 +18,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Base64;
 import java.util.List;
+import java.util.Set;
 
 import static com.carmarket.utils.Directory.IMAGE_DIRECTORY;
 
@@ -68,6 +70,16 @@ public class CarController {
             return new ResponseEntity<>(multipartFile.getOriginalFilename(), HttpStatus.CREATED);
         } catch (IOException e) {
             return new ResponseEntity<>("Image not updated", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PutMapping(value = "/get-advanced-search-cars")
+    public ResponseEntity<?> getAdvancedSearchCarList(@RequestBody ObjectNode objectNode) {
+        try {
+            Set<Car> carList = carService.getAdvancedSearchCarList(objectNode);
+            return new ResponseEntity<>(carList, HttpStatus.OK);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(HttpStatus.GATEWAY_TIMEOUT);
         }
     }
 }
