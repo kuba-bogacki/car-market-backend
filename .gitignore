@@ -2,9 +2,12 @@ HELP.md
 target/
 src/main/resources/static/images/*
 src/main/resources/static/articles/*
+src/main/resources/application.properties
+src/main/resources/META-INF/*
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
+
 
 ### STS ###
 .apt_generated

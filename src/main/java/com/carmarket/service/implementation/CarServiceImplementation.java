@@ -109,9 +109,11 @@ class CarServiceImplementation implements CarService {
 
         Set<Car> filteredByTypesCarsSet = new HashSet<>(searchedByCarCrushed);
 
-        String carCompanyName = objectNode.get("carCompany").asText().substring(0, 1).toUpperCase() +
+        String carCompanyName = objectNode.get("carCompany").asText().equals("") ? "" :
+                objectNode.get("carCompany").asText().substring(0, 1).toUpperCase() +
                 objectNode.get("carCompany").asText().substring(1);
-        String carModelName = objectNode.get("carModel").asText().substring(0, 1).toUpperCase() +
+        String carModelName = objectNode.get("carModel").asText().equals("") ? "" :
+                objectNode.get("carModel").asText().substring(0, 1).toUpperCase() +
                 objectNode.get("carModel").asText().substring(1);
 
         int minCarReleaseYearRange = objectNode.get("carReleaseYearRange").get(0).asInt();
@@ -122,8 +124,8 @@ class CarServiceImplementation implements CarService {
         int maxCarPriceRange = objectNode.get("carPriceRange").get(1).asInt();
 
         return filteredByTypesCarsSet.stream()
-                .filter(e -> e.getCarCompany().equals(carCompanyName))
-                .filter(e -> e.getCarModel().equals(carModelName))
+                .filter(e -> carCompanyName.equals("") ? !e.getCarCompany().equals("") : e.getCarCompany().equals(carCompanyName))
+                .filter(e -> carModelName.equals("") ? !e.getCarModel().equals("") : e.getCarModel().equals(carModelName))
                 .filter(e -> (minCarReleaseYearRange <= e.getCarReleaseYear()) && (e.getCarReleaseYear() <= maxCarReleaseYearRange))
                 .filter(e -> (minCarMileageRange <= e.getCarMileage()) && (e.getCarMileage() <= maxCarMileageRange))
                 .filter(e -> (minCarPriceRange <= e.getCarPrice()) && (e.getCarPrice() <= maxCarPriceRange))
