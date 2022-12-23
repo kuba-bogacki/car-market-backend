@@ -11,7 +11,9 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -22,6 +24,13 @@ class PaymentServiceImplementation implements PaymentService {
     @Autowired
     public PaymentServiceImplementation(PaymentRepository paymentRepository) {
         this.paymentRepository = paymentRepository;
+    }
+
+    @Override
+    public List<Payment> getAllTransactions() {
+        return paymentRepository.findAll().stream()
+                .sorted(Comparator.comparing(Payment::getPaymentDateTime).reversed())
+                .toList();
     }
 
     @Override

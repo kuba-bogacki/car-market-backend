@@ -87,24 +87,33 @@ class CarServiceImplementation implements CarService {
         List<Car> searchedByCarCrushed = new ArrayList<>();
 
         boolean sedanCarType = objectNode.get("carTypeArray").get("sedan").asBoolean();
-        searchedByCarType.addAll(this.completeCarsByCarType(sedanCarType, SEDAN, allCarsList));
         boolean suvCarType = objectNode.get("carTypeArray").get("suv").asBoolean();
-        searchedByCarType.addAll(this.completeCarsByCarType(suvCarType, SUV, allCarsList));
         boolean coupeCarType = objectNode.get("carTypeArray").get("coupe").asBoolean();
-        searchedByCarType.addAll(this.completeCarsByCarType(coupeCarType, COUPE, allCarsList));
         boolean otherCarType = objectNode.get("carTypeArray").get("other").asBoolean();
+        if (!sedanCarType && !suvCarType && !coupeCarType && !otherCarType) {
+            sedanCarType = true; suvCarType = true; coupeCarType = true; otherCarType = true;
+        }
+        searchedByCarType.addAll(this.completeCarsByCarType(sedanCarType, SEDAN, allCarsList));
+        searchedByCarType.addAll(this.completeCarsByCarType(suvCarType, SUV, allCarsList));
+        searchedByCarType.addAll(this.completeCarsByCarType(coupeCarType, COUPE, allCarsList));
         searchedByCarType.addAll(this.completeCarsByCarType(otherCarType, OTHER, allCarsList));
 
         boolean electricEngineType = objectNode.get("engineTypeArray").get("electric").asBoolean();
-        searchedByEngineType.addAll(this.completeCarsByEngineType(electricEngineType, ELECTRIC, searchedByCarType));
         boolean dieselEngineType = objectNode.get("engineTypeArray").get("diesel").asBoolean();
-        searchedByEngineType.addAll(this.completeCarsByEngineType(dieselEngineType, DIESEL, searchedByCarType));
         boolean gasEngineType = objectNode.get("engineTypeArray").get("gas").asBoolean();
+        if (!electricEngineType && !dieselEngineType && !gasEngineType) {
+            electricEngineType = true; dieselEngineType = true; gasEngineType = true;
+        }
+        searchedByEngineType.addAll(this.completeCarsByEngineType(electricEngineType, ELECTRIC, searchedByCarType));
+        searchedByEngineType.addAll(this.completeCarsByEngineType(dieselEngineType, DIESEL, searchedByCarType));
         searchedByEngineType.addAll(this.completeCarsByEngineType(gasEngineType, GAS, searchedByCarType));
 
         boolean yesCarCrushed = objectNode.get("crushedArray").get("yes").asBoolean();
-        searchedByCarCrushed.addAll(this.completeCarsByCarCrushed(yesCarCrushed, true, searchedByEngineType));
         boolean noCarCrushed = objectNode.get("crushedArray").get("no").asBoolean();
+        if (!yesCarCrushed && !noCarCrushed) {
+            yesCarCrushed = true; noCarCrushed = true;
+        }
+        searchedByCarCrushed.addAll(this.completeCarsByCarCrushed(yesCarCrushed, true, searchedByEngineType));
         searchedByCarCrushed.addAll(this.completeCarsByCarCrushed(noCarCrushed, false, searchedByEngineType));
 
         Set<Car> filteredByTypesCarsSet = new HashSet<>(searchedByCarCrushed);

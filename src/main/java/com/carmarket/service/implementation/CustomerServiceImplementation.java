@@ -13,9 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Optional;
+import java.util.*;
 
 import static com.carmarket.model.type.CustomerRole.ADMIN;
 import static com.carmarket.model.type.CustomerRole.USER;
@@ -37,12 +35,11 @@ class CustomerServiceImplementation implements CustomerService {
     }
 
     @Override
-    public void createAfterStart(String customerFirstName, String customerLastName,
-                                 String customerEmail, String customerPassword) {
+    public void createAdminAccount() {
         Customer customer = Customer.builder()
-                .customerFirstName("Kuba")
-                .customerLastName("Bogacki")
-                .customerEmail("kubik@wp.pl")
+                .customerFirstName("Admin")
+                .customerLastName("Admin")
+                .customerEmail("admin@wp.pl")
                 .customerPassword(passwordEncoder.encode("admin"))
                 .authorities(ADMIN.getGrantedAuthorities())
                 .accountNonExpired(true)
@@ -51,6 +48,13 @@ class CustomerServiceImplementation implements CustomerService {
                 .enabled(true)
                 .build();
         customerRepository.save(customer);
+    }
+
+    @Override
+    public List<Customer> getAllCustomers() {
+        return customerRepository.findAll().stream()
+                .sorted(Comparator.comparing(Customer::getCustomerId).reversed())
+                .toList();
     }
 
     @Override

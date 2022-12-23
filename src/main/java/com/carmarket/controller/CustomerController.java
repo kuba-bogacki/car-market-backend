@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -36,6 +37,18 @@ public class CustomerController {
                 customerService.selectCustomerByCustomerEmail(jwtConfiguration.getUsernameFromToken(token.substring(7)));
         if (currentCustomer.isPresent()) {
             return ResponseEntity.ok(currentCustomer.get());
+        } else {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping(value = "/get-all-customers")
+    public ResponseEntity<?> getAllCustomers(@RequestHeader("Authorization") String token) {
+        Optional<Customer> currentCustomer =
+                customerService.selectCustomerByCustomerEmail(jwtConfiguration.getUsernameFromToken(token.substring(7)));
+        if (currentCustomer.isPresent()) {
+            List<Customer> customerList = customerService.getAllCustomers();
+            return new ResponseEntity<>(customerList, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
@@ -78,5 +91,10 @@ public class CustomerController {
         } else {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @PostMapping(value = "/create-admin")
+    public void createAdminAccount() {
+        customerService.createAdminAccount();
     }
 }

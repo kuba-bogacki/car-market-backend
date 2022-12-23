@@ -60,19 +60,10 @@ public class ApplicationSecurityConfiguration extends WebSecurityConfigurerAdapt
                 .authorizeRequests()
                 .antMatchers("/", "/css/*", "/js/*", "/authenticate", "/register", "/cars", "/get-car/*",
                         "/get-publish-stripe-key", "/get-all-articles", "/get-individual-article/*",
-                        "/get-advanced-search-cars")
+                        "/get-advanced-search-cars", "/create-admin")
                 .permitAll()
-//                .antMatchers("/api/**").hasRole(ADMIN.name())
                 .anyRequest().authenticated();
         httpSecurity
                 .headers().cacheControl(HeadersConfigurer.CacheControlConfig::disable); //disable caching
     }
-
-//    @Bean
-//    CorsConfigurationSource corsConfigurationSource() {
-//        final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-//        CorsConfiguration corsConfiguration = new CorsConfiguration().applyPermitDefaultValues();
-//        source.registerCorsConfiguration("/**", corsConfiguration);
-//        return source;
-//    }
 }

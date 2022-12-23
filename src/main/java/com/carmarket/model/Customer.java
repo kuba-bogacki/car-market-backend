@@ -37,7 +37,6 @@ public class Customer implements UserDetails {
             joinColumns = {@JoinColumn(name = "customer_id")},
             inverseJoinColumns = {@JoinColumn(name = "car_id")})
     private Set<Car> customerLikes = new HashSet<>();
-
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Article> customerArticles = new ArrayList<>();
     @ElementCollection(fetch = FetchType.EAGER)

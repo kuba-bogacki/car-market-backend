@@ -3,6 +3,7 @@ package com.carmarket.controller;
 import com.carmarket.jwt.JwtConfiguration;
 import com.carmarket.model.Car;
 import com.carmarket.model.Customer;
+import com.carmarket.model.Payment;
 import com.carmarket.model.type.Currency;
 import com.carmarket.service.CarService;
 import com.carmarket.service.CustomerService;
@@ -17,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -43,6 +45,18 @@ public class PaymentController {
     public ResponseEntity<String> getPublishStripeKey() {
         String publicKey = paymentConfiguration.getStripePublicKey();
         return ResponseEntity.ok(publicKey);
+    }
+
+    @GetMapping(value = "/get-all-payments")
+    public ResponseEntity<?> getaAllPaymentTransactions(@RequestHeader("Authorization") String token) {
+//        Optional<Customer> currentCustomer =
+//                customerService.selectCustomerByCustomerEmail(jwtConfiguration.getUsernameFromToken(token.substring(7)));
+//        if (currentCustomer.isPresent()) {
+            List<Payment> paymentList = paymentService.getAllTransactions();
+            return new ResponseEntity<>(paymentList, HttpStatus.OK);
+//        } else {
+//            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+//        }
     }
 
     @PostMapping(value = "/charge-customer")
