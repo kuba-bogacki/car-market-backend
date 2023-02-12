@@ -6,6 +6,8 @@ import com.carmarket.model.Car;
 import com.carmarket.model.Customer;
 import com.carmarket.repository.CarRepository;
 import com.carmarket.service.CustomerService;
+import com.carmarket.service.EmailService;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -13,8 +15,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import javax.mail.MessagingException;
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
+
+import static com.carmarket.model.type.CustomerRole.ADMIN;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
@@ -22,13 +28,15 @@ public class CustomerController {
     private final CustomerService customerService;
     private final CarRepository carRepository;
     private final JwtConfiguration jwtConfiguration;
+    private final EmailService emailService;
 
     @Autowired
     public CustomerController(CustomerService customerService, CarRepository carRepository,
-                              JwtConfiguration jwtConfiguration) {
+                              JwtConfiguration jwtConfiguration, EmailService emailService) {
         this.customerService = customerService;
         this.carRepository = carRepository;
         this.jwtConfiguration = jwtConfiguration;
+        this.emailService = emailService;
     }
 
     @GetMapping(value = "/get-current-customer")
@@ -46,7 +54,7 @@ public class CustomerController {
     public ResponseEntity<?> getAllCustomers(@RequestHeader("Authorization") String token) {
         Optional<Customer> currentCustomer =
                 customerService.selectCustomerByCustomerEmail(jwtConfiguration.getUsernameFromToken(token.substring(7)));
-        if (currentCustomer.isPresent()) {
+        if (currentCustomer.isPresent() && currentCustomer.get().getAuthorities().equals(ADMIN.getGrantedAuthorities())) {
             List<Customer> customerList = customerService.getAllCustomers();
             return new ResponseEntity<>(customerList, HttpStatus.OK);
         } else {
@@ -64,6 +72,35 @@ public class CustomerController {
             final UserDetails userDetails = customerService.loadUserByUsername(customer.getCustomerEmail());
             final String token = jwtConfiguration.generateToken(userDetails);
             return ResponseEntity.ok(new JwtTokenResponse(token));
+        }
+    }
+
+    @PutMapping(value = "/send-email-to-reset-password")
+    public ResponseEntity<?> sendEmailWithResetPasswordLink(@RequestBody ObjectNode objectNode)
+            throws MessagingException, IOException {
+        Optional<Customer> currentCustomer =
+            customerService.selectCustomerByCustomerEmail(objectNode.get("customerEmail").asText());
+        if (currentCustomer.isPresent()) {
+            emailService.sendVerificationEmail(currentCustomer.get());
+            return new ResponseEntity<>(HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PutMapping(value = "/reset-password")
+    public ResponseEntity<?> resetCustomerPassword(@RequestBody ObjectNode objectNode) {
+        Optional<Customer> currentCustomer =
+            customerService.selectCustomerByCustomerEmail(objectNode.get("customerEmail").asText());
+        if (currentCustomer.isPresent() &&
+            currentCustomer.get().getCustomerVerificationCode().equals(objectNode.get("verificationCode").asText())) {
+            Customer modifiedCustomer =
+                customerService.resetCustomerPassword(currentCustomer.get(), objectNode.get("customerPassword").asText());
+            final UserDetails userDetails = customerService.loadUserByUsername(modifiedCustomer.getCustomerEmail());
+            final String token = jwtConfiguration.generateToken(userDetails);
+            return new ResponseEntity<>(new JwtTokenResponse(token), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 

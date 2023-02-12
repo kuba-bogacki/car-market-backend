@@ -5,6 +5,7 @@ import com.carmarket.jwt.JwtTokenRequest;
 import com.carmarket.jwt.JwtTokenResponse;
 import com.carmarket.model.Customer;
 import com.carmarket.exception.AuthenticationException;
+import com.carmarket.security.GoogleConfiguration;
 import com.carmarket.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -26,13 +27,21 @@ public class AuthenticationController {
     private final AuthenticationManager authenticationManager;
     private final JwtConfiguration jwtConfiguration;
     private final CustomerService customerService;
+    private final GoogleConfiguration googleConfiguration;
 
     @Autowired
     public AuthenticationController(AuthenticationManager authenticationManager, JwtConfiguration jwtConfiguration,
-                                    CustomerService customerService) {
+                                    CustomerService customerService, GoogleConfiguration googleConfiguration) {
         this.authenticationManager = authenticationManager;
         this.jwtConfiguration = jwtConfiguration;
         this.customerService = customerService;
+        this.googleConfiguration = googleConfiguration;
+    }
+
+    @GetMapping(value = "/get-google-public-id")
+    public ResponseEntity<String> getGooglePublicId() {
+        String googlePublicId = googleConfiguration.getGoogleClientId();
+        return ResponseEntity.ok(googlePublicId);
     }
 
     @PostMapping(value = "/authenticate")

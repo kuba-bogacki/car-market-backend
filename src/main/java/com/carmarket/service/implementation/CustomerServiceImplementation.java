@@ -5,7 +5,7 @@ import com.carmarket.model.Customer;
 import com.carmarket.repository.CarRepository;
 import com.carmarket.repository.CustomerRepository;
 import com.carmarket.service.CustomerService;
-import org.checkerframework.checker.units.qual.A;
+import net.bytebuddy.utility.RandomString;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -41,6 +41,7 @@ class CustomerServiceImplementation implements CustomerService {
                 .customerLastName("Admin")
                 .customerEmail("admin@wp.pl")
                 .customerPassword(passwordEncoder.encode("admin"))
+                .customerVerificationCode(RandomString.make(64))
                 .authorities(ADMIN.getGrantedAuthorities())
                 .accountNonExpired(true)
                 .accountNonLocked(true)
@@ -48,6 +49,13 @@ class CustomerServiceImplementation implements CustomerService {
                 .enabled(true)
                 .build();
         customerRepository.save(customer);
+    }
+
+    @Override
+    public Customer resetCustomerPassword(Customer customer, String customerPassword) {
+        customer.setCustomerPassword(passwordEncoder.encode(customerPassword));
+        customer.setCustomerVerificationCode(RandomString.make(64));
+        return customerRepository.save(customer);
     }
 
     @Override
@@ -79,6 +87,7 @@ class CustomerServiceImplementation implements CustomerService {
                 .customerLastName(customerLastName)
                 .customerEmail(customerEmail)
                 .customerPassword(passwordEncoder.encode(customerPassword))
+                .customerVerificationCode(RandomString.make(64))
                 .customerCarsList(new ArrayList<>())
                 .customerLikes(new HashSet<>())
                 .customerArticles(new ArrayList<>())

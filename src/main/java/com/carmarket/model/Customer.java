@@ -30,6 +30,8 @@ public class Customer implements UserDetails {
     private String customerEmail;
     @Column(name = "customer_password")
     private String customerPassword;
+    @Column(name = "customerVerification_code", length = 64)
+    private String customerVerificationCode;
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Car> customerCarsList = new ArrayList<>();
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
@@ -53,13 +55,14 @@ public class Customer implements UserDetails {
 
     @Builder
     public Customer(String customerFirstName, String customerLastName, String customerEmail, String customerPassword,
-                    List<Car> customerCarsList, Set<Car> customerLikes, List<Article> customerArticles,
-                    Set<SimpleGrantedAuthority> authorities, boolean accountNonExpired, boolean accountNonLocked,
-                    boolean credentialsNonExpired, boolean enabled) {
+                    String customerVerificationCode, List<Car> customerCarsList, Set<Car> customerLikes,
+                    List<Article> customerArticles, Set<SimpleGrantedAuthority> authorities, boolean accountNonExpired,
+                    boolean accountNonLocked, boolean credentialsNonExpired, boolean enabled) {
         super();
         this.customerFirstName = customerFirstName;
         this.customerLastName = customerLastName;
         this.customerPassword = customerPassword;
+        this.customerVerificationCode = customerVerificationCode;
         this.customerCarsList = customerCarsList;
         this.customerLikes = customerLikes;
         this.customerArticles = customerArticles;

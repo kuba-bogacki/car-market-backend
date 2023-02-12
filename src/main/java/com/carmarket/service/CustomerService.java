@@ -15,4 +15,5 @@ public interface CustomerService extends UserDetailsService {
     void addCarToCustomerFavourites(Customer customer, Car car);
     void removeCarFromCustomerFavourites(Customer customer, Car car);
     void createAdminAccount();
+    Customer resetCustomerPassword(Customer customer, String customerPassword);
 }

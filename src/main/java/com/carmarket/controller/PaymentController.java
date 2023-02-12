@@ -1,7 +1,6 @@
 package com.carmarket.controller;
 
 import com.carmarket.jwt.JwtConfiguration;
-import com.carmarket.model.Car;
 import com.carmarket.model.Customer;
 import com.carmarket.model.Payment;
 import com.carmarket.model.type.Currency;
@@ -13,13 +12,14 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.stripe.exception.StripeException;
 import com.stripe.model.Charge;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+
+import static com.carmarket.model.type.CustomerRole.ADMIN;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
@@ -49,14 +49,15 @@ public class PaymentController {
 
     @GetMapping(value = "/get-all-payments")
     public ResponseEntity<?> getaAllPaymentTransactions(@RequestHeader("Authorization") String token) {
-//        Optional<Customer> currentCustomer =
-//                customerService.selectCustomerByCustomerEmail(jwtConfiguration.getUsernameFromToken(token.substring(7)));
-//        if (currentCustomer.isPresent()) {
+        System.out.println(token);
+        Optional<Customer> currentCustomer =
+                customerService.selectCustomerByCustomerEmail(jwtConfiguration.getUsernameFromToken(token.substring(7)));
+        if (currentCustomer.isPresent() && currentCustomer.get().getAuthorities().equals(ADMIN.getGrantedAuthorities())) {
             List<Payment> paymentList = paymentService.getAllTransactions();
             return new ResponseEntity<>(paymentList, HttpStatus.OK);
-//        } else {
-//            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-//        }
+        } else {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
     }
 
     @PostMapping(value = "/charge-customer")

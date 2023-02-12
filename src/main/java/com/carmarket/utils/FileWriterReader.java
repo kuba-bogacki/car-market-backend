@@ -29,17 +29,15 @@ public class FileWriterReader {
 
     public static String readArticleFile(String articleName) {
         String article = "";
-        try {
-            File file = new File(ARTICLES_DIRECTORY + articleName);
-            Scanner myReader = new Scanner(file);
+        try (Scanner myReader = new Scanner(new File(ARTICLES_DIRECTORY + articleName))) {
             while (myReader.hasNextLine()) {
                 article = myReader.nextLine();
             }
-            myReader.close();
             return article;
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
     }
+
 }
 

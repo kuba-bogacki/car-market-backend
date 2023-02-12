@@ -59,10 +59,12 @@ public class ApplicationSecurityConfiguration extends WebSecurityConfigurerAdapt
                 .addFilterBefore(tokenVerifier, UsernamePasswordAuthenticationFilter.class)
                 .authorizeRequests()
                 .antMatchers("/", "/css/*", "/js/*", "/authenticate", "/register", "/cars", "/get-car/*",
-                        "/get-publish-stripe-key", "/get-all-articles", "/get-individual-article/*",
-                        "/get-advanced-search-cars", "/create-admin")
+                        "/get-publish-stripe-key", "/get-all-articles", "/get-individual-article/*", "/create-admin",
+                        "/get-advanced-search-cars","/reset-password", "/send-email-to-reset-password",
+                        "/get-google-public-id")
                 .permitAll()
-                .anyRequest().authenticated();
+                .anyRequest().authenticated()
+                .and().oauth2Login();
         httpSecurity
                 .headers().cacheControl(HeadersConfigurer.CacheControlConfig::disable); //disable caching
     }
